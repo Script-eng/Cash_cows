@@ -34,7 +34,7 @@
                         <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Profile</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li>
-                            <form method="POST" action="{{ route('logout') }}">
+                            <form method="POST" action="{{ url('/logout') }}">
                                 @csrf
                                 <button type="submit" class="dropdown-item">Logout</button>
                             </form>
@@ -45,3 +45,20 @@
         </div>
     </div>
 </nav>
+<div class="navbar-nav ms-auto">
+    <div class="nav-item me-2">
+        <form method="POST" action="{{ url('/logout') }}">
+            @csrf
+            <button type="submit" class="btn btn-light">Logout</button>
+        </form>
+    </div>
+    
+    <div class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {{ Auth::user()->name }}
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
+            <li><a class="dropdown-item" href="{{ route('profile.edit') }}">Profile</a></li>
+        </ul>
+    </div>
+</div>
