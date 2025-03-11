@@ -1,7 +1,7 @@
-<nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container">
-        <a class="navbar-brand" href="{{ route('dashboard') }}">
-            Cash Cows
+        <a class="navbar-brand" href="{{ route('admin.dashboard') }}">
+            Cash Cows Admin
         </a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -9,20 +9,14 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}" href="{{ route('dashboard') }}">Dashboard</a>
+                    <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}" href="{{ route('admin.dashboard') }}">Dashboard</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('contributions.*') ? 'active' : '' }}" href="{{ route('contributions.index') }}">My Contributions</a>
+                    <a class="nav-link {{ request()->routeIs('admin.contributions.*') ? 'active' : '' }}" href="{{ route('admin.contributions.index') }}">Contributions</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ request()->routeIs('reports.*') ? 'active' : '' }}" href="{{ route('reports.index') }}">Reports</a>
+                    <a class="nav-link" href="{{ route('dashboard') }}">Back to User Dashboard</a>
                 </li>
-                
-                @if(auth()->user()->isAdmin())
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.dashboard') }}">Admin Panel</a>
-                </li>
-                @endif
             </ul>
             
             <div class="navbar-nav ms-auto">

@@ -2,63 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Contribution;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ContributionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $contributions = Auth::user()->contributions()
+            ->orderBy('transaction_date', 'desc')
+            ->paginate(10);
+            
+        return view('contributions.index', compact('contributions'));
     }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    
+    public function show(Contribution $contribution)
     {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        // Ensure the user can only view their own contributions
+        if ($contribution->user_id !== Auth::id() && !Auth::user()->isAdmin()) {
+            abort(403, 'Unauthorized action.');
+        }
+        
+        return view('contributions.show', compact('contribution'));
     }
 }
