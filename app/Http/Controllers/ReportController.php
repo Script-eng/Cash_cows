@@ -21,6 +21,31 @@ class ReportController extends Controller
             
         return view('reports.index', compact('reports'));
     }
+    public function preview(Report $report)
+{
+    $this->authorize('view', $report);
+    
+    return response()->file(storage_path('app/public/' . $report->file_path));
+}
+    
+    /**
+     * Show the form for creating a new report.
+     * This method is needed to match the route that directs to the report creation page.
+     */
+    public function create()
+    {
+        return view('reports.create');
+    }
+    
+    /**
+     * Store a newly created report in storage.
+     * We'll now use the generate() method logic in the store() method
+     * to maintain RESTful controller conventions.
+     */
+    public function store(Request $request)
+    {
+        return $this->generate($request);
+    }
     
     public function generate(Request $request)
     {

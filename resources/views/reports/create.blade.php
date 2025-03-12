@@ -1,3 +1,4 @@
+// resources/views/reports/create.blade.php
 @extends('layouts.app')
 
 @section('content')
@@ -9,6 +10,16 @@
                     <h5 class="mb-0">Generate New Report</h5>
                 </div>
                 <div class="card-body">
+                    @if ($errors->any())
+                        <div class="alert alert-danger">
+                            <ul class="mb-0">
+                                @foreach ($errors->all() as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+                    
                     <form action="{{ route('reports.store') }}" method="POST">
                         @csrf
                         

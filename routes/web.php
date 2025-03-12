@@ -15,11 +15,18 @@ use App\Http\Controllers\Admin\ContributionController as AdminContributionContro
 use App\Http\Controllers\ContributionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\MemberDashboardController;
 
 
 
 Route::get('/', function () {
     return view('welcome');
+});
+// In routes/web.php
+Route::get('/reports/{report}/preview', [ReportController::class, 'preview'])->name('reports.preview');
+Route::middleware(['auth'])->group(function () {
+    Route::get('/member/dashboard', [MemberDashboardController::class, 'index'])->name('member.dashboard');
+    // Add other member routes here as needed
 });
 Route::post('/logout', [App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'destroy'])
     ->middleware('auth')
@@ -32,6 +39,28 @@ Route::middleware('guest')->group(function () {
     Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
     // ...other auth routes
+});
+// In routes/web.php
+Route::middleware(['auth'])->group(function () {
+    // Dashboard routes
+    Route::get('/dashboard', function () {
+        return redirect()->route('member.dashboard');
+    })->name('dashboard');
+    
+    // Member dashboard
+    Route::get('/member/dashboard', [MemberDashboardController::class, 'index'])->name('member.dashboard');
+    
+    // Contribution routes
+    Route::get('/contributions', [ContributionController::class, 'index'])->name('contributions.index');
+    
+    // Report routes
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/create', [ReportController::class, 'create'])->name('reports.create');
+    
+    // Profile routes (from Laravel Breeze)
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
 // Authenticated routes

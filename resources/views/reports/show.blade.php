@@ -1,3 +1,4 @@
+// resources/views/reports/show.blade.php
 @extends('layouts.app')
 
 @section('content')
@@ -23,7 +24,7 @@
             </div>
             
             <div class="embed-responsive">
-                <iframe src="{{ route('reports.download', $report->id) }}" class="embed-responsive-item w-100" style="height: 600px;"></iframe>
+                <iframe src="{{ route('reports.preview', $report->id) }}" class="embed-responsive-item w-100" style="height: 600px;"></iframe>
             </div>
         </div>
     </div>

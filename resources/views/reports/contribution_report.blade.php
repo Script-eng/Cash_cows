@@ -1,3 +1,4 @@
+// resources/views/reports/contribution_report.blade.php
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -101,8 +102,8 @@
             <tbody>
                 @forelse($contributions as $contribution)
                     <tr>
-                        <td>{{ $contribution->transaction_date->format('M d, Y') }}</td>
-                        <td>{{ number_format($contribution->amount, 2) }}</td>
+                        <td>{{ Carbon\Carbon::parse($contribution->transaction_date)->format('M d, Y') }}</td>
+                        <td>KES {{ number_format($contribution->amount, 2) }}</td>
                         <td>{{ $contribution->description ?: 'N/A' }}</td>
                     </tr>
                 @empty
@@ -114,7 +115,7 @@
                 @if($contributions->isNotEmpty())
                     <tr class="total-row">
                         <td>Total</td>
-                        <td>{{ number_format($totalAmount, 2) }}</td>
+                        <td>KES {{ number_format($totalAmount, 2) }}</td>
                         <td></td>
                     </tr>
                 @endif

@@ -30,6 +30,16 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+    // In User model
+public function personalReports()
+{
+    return $this->hasMany(Report::class, 'user_id');
+}
+
+public function generatedReports()
+{
+    return $this->hasMany(Report::class, 'generated_by');
+}
 
     public function contributions()
     {
@@ -41,15 +51,8 @@ class User extends Authenticatable
         return $this->hasMany(Contribution::class, 'verified_by');
     }
 
-    public function generatedReports()
-    {
-        return $this->hasMany(Report::class, 'generated_by');
-    }
-
-    public function personalReports()
-    {
-        return $this->hasMany(Report::class, 'user_id');
-    }
+    
+    
 
     public function transactions()
     {
