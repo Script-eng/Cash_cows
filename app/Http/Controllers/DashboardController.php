@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Http\Controllers\Controller;
 use App\Models\Contribution;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
