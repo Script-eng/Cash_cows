@@ -1,4 +1,5 @@
 <?php
+// app/Models/User.php
 
 namespace App\Models;
 
@@ -58,11 +59,6 @@ class User extends Authenticatable
     public function isAdmin()
     {
         return $this->role === 'admin';
-    }
-
-    public function isRegularUser()
-    {
-        return $this->role === 'user';
     }
 
     public function totalContributions()

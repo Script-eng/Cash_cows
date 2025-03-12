@@ -32,9 +32,7 @@
                             <div class="card bg-info text-white">
                                 <div class="card-body">
                                     <h5 class="card-title">Contributions Count</h5>
-                                    h2 class="display-4">{{ Auth::user()->contributions()->where('verification_status', 'verified')->count() }}</h2>
-        
-                                    
+                                    <h2 class="display-4">{{ Auth::user()->contributions()->verified()->count() }}</h2>
                                 </div>
                             </div>
                         </div>
@@ -72,14 +70,7 @@
                                         <div>
                                             <strong>{{ number_format($contribution->amount, 2) }}</strong>
                                             <br>
-                                            
-                                            <small class="text-muted">
-                                                @if(is_string($contribution->transaction_date))
-                                                    {{ \Carbon\Carbon::parse($contribution->transaction_date)->format('M d, Y') }}
-                    @else
-        {{ $contribution->transaction_date->format('M d, Y') }}
-    @endif
-</small>
+                                            <small class="text-muted">{{ $contribution->transaction_date->format('M d, Y') }}</small>
                                         </div>
                                         <span class="badge bg-success">Verified</span>
                                     </div>

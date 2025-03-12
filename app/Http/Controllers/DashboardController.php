@@ -15,7 +15,7 @@ class DashboardController extends Controller
         
         // Get verified contributions for the current user
         $contributions = $user->contributions()
-            ->where('verification_status', 'verified')
+            ->verified()
             ->orderBy('transaction_date', 'desc')
             ->limit(5)
             ->get();
