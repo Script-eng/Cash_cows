@@ -11,6 +11,7 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminDashboardController;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Admin\AdminMemberController;
 use App\Http\Controllers\Admin\AdminReportController;
 use App\Http\Controllers\Admin\AdminContributionController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\ContributionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\MemberDashboardController;
+use App\Http\Middleware\CheckRole;
 
 // Public Routes
 Route::get('/', function () {
@@ -37,11 +39,16 @@ Route::middleware('guest')->group(function () {
 Route::middleware('auth')->group(function () {
     // Logout
     Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
-    
-    // Dashboard redirect
     Route::get('/dashboard', function () {
-        return redirect()->route('member.dashboard');
+        if (Auth::user()->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        } else {
+            return redirect()->route('member.dashboard');
+        }
     })->name('dashboard');
+    
+    // Dashboard redirect based on role
+    
     
     // Member Dashboard
     Route::get('/member/dashboard', [MemberDashboardController::class, 'index'])->name('member.dashboard');
@@ -67,7 +74,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 // Admin Routes
-Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', CheckRole::class.':admin'])->prefix('admin')->name('admin.')->group(function () {
+//Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     // Dashboard
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     
