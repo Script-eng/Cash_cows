@@ -11,85 +11,87 @@ use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminDashboardController;
-use App\Http\Controllers\Admin\ContributionController as AdminContributionController;
+use App\Http\Controllers\Admin\AdminMemberController;
+use App\Http\Controllers\Admin\AdminReportController;
+use App\Http\Controllers\Admin\AdminContributionController;
 use App\Http\Controllers\ContributionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\MemberDashboardController;
 
-
-
+// Public Routes
 Route::get('/', function () {
     return view('welcome');
 });
-// In routes/web.php
-Route::get('/reports/{report}/preview', [ReportController::class, 'preview'])->name('reports.preview');
-Route::middleware(['auth'])->group(function () {
-    Route::get('/member/dashboard', [MemberDashboardController::class, 'index'])->name('member.dashboard');
-    // Add other member routes here as needed
-});
-Route::post('/logout', [App\Http\Controllers\Auth\AuthenticatedSessionController::class, 'destroy'])
-    ->middleware('auth')
-    ->name('logout');
-// Guest routes
 
+// Guest Routes
 Route::middleware('guest')->group(function () {
     Route::get('register', [RegisteredUserController::class, 'create'])->name('register');
     Route::post('register', [RegisteredUserController::class, 'store']);
     Route::get('login', [AuthenticatedSessionController::class, 'create'])->name('login');
     Route::post('login', [AuthenticatedSessionController::class, 'store']);
-    // ...other auth routes
+    // Other auth routes for guests
 });
-// In routes/web.php
-Route::middleware(['auth'])->group(function () {
-    // Dashboard routes
+
+// Auth Routes (accessible to all authenticated users)
+Route::middleware('auth')->group(function () {
+    // Logout
+    Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])->name('logout');
+    
+    // Dashboard redirect
     Route::get('/dashboard', function () {
         return redirect()->route('member.dashboard');
     })->name('dashboard');
     
-    // Member dashboard
+    // Member Dashboard
     Route::get('/member/dashboard', [MemberDashboardController::class, 'index'])->name('member.dashboard');
     
-    // Contribution routes
-    Route::get('/contributions', [ContributionController::class, 'index'])->name('contributions.index');
-    
-    // Report routes
-    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
-    Route::get('/reports/create', [ReportController::class, 'create'])->name('reports.create');
-    
-    // Profile routes (from Laravel Breeze)
+    // Profile Management
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Authenticated routes
+// Member Routes (authenticated & verified users)
 Route::middleware(['auth', 'verified'])->group(function () {
-    // Dashboard
-    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
     // Contributions
     Route::resource('contributions', ContributionController::class)->only(['index', 'show']);
+    Route::get('/contributions', [ContributionController::class, 'index'])->name('contributions.index');
     
     // Reports
     Route::resource('reports', ReportController::class);
+    Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
+    Route::get('/reports/create', [ReportController::class, 'create'])->name('reports.create');
     Route::get('/reports/{report}/download', [ReportController::class, 'download'])->name('reports.download');
-    
-    // Profile routes (from Laravel Breeze)
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::get('/reports/{report}/preview', [ReportController::class, 'preview'])->name('reports.preview');
 });
 
-// Admin routes
-Route::middleware(['auth', 'verified', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
-    // Admin dashboard
+// Admin Routes
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
+    // Dashboard
     Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('dashboard');
     
-    // Admin contribution management
+    // Member Management
+    Route::resource('members', AdminMemberController::class);
+    Route::get('/members/{member}/reset-password', [AdminMemberController::class, 'resetPassword'])->name('members.reset-password');
+    Route::get('/members/{member}/refund', [AdminMemberController::class, 'showRefund'])->name('members.refund');
+    Route::post('/members/{member}/refund', [AdminMemberController::class, 'processRefund'])->name('members.process-refund');
+    Route::get('/members/{member}/contribution', [AdminMemberController::class, 'createContribution'])->name('members.contribution.create');
+    Route::post('/members/{member}/contribution', [AdminMemberController::class, 'storeContribution'])->name('members.contribution.store');
+    
+    // Contribution Management
     Route::resource('contributions', AdminContributionController::class);
     Route::post('/contributions/{contribution}/verify', [AdminContributionController::class, 'verify'])->name('contributions.verify');
+    Route::post('/contributions/batch-verify', [AdminContributionController::class, 'batchVerify'])->name('contributions.batch-verify');
+    Route::get('/contributions/batch/create', [AdminContributionController::class, 'batchCreate'])->name('contributions.batch.create');
+    Route::post('/contributions/batch', [AdminContributionController::class, 'batchStore'])->name('contributions.batch.store');
+    Route::get('/contributions/import', [AdminContributionController::class, 'importForm'])->name('contributions.import.form');
+    Route::post('/contributions/import', [AdminContributionController::class, 'import'])->name('contributions.import');
     
-    // Admin report management
+    // Report Generation
+    Route::get('/reports', [AdminReportController::class, 'index'])->name('reports');
+    Route::get('/reports/financial', [AdminReportController::class, 'generateFinancialReport'])->name('reports.financial');
+    Route::get('/reports/compliance', [AdminReportController::class, 'generateComplianceReport'])->name('reports.compliance');
+    Route::get('/reports/member-statement', [AdminReportController::class, 'generateMemberStatement'])->name('reports.member-statement');
     Route::get('/reports/group', [ReportController::class, 'groupReports'])->name('reports.group');
 });

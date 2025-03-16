@@ -7,7 +7,7 @@
             <div class="card shadow-sm">
                 <div class="card-body">
                     <h2 class="card-title">Welcome, {{ Auth::user()->name }}</h2>
-                    <p class="text-muted">Your savings at a glance</p>
+                    <p class="text-muted">Your savings at a glance weweeeeeee</p>
                     
                     <div class="row mt-4">
                         <div class="col-md-3">

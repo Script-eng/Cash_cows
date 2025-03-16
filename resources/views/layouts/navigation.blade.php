@@ -20,7 +20,7 @@
                 
                 @if(auth()->user()->isAdmin())
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin.dashboard') }}">Admin Panel</a>
+                    <a class="nav-link" href="{{ route('admin.dashboard.dashboard') }}">Admin Panel</a>
                 </li>
                 @endif
             </ul>
